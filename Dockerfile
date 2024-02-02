@@ -1,0 +1,1 @@
+FROM kalaksi/tinyproxy:latest

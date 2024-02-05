@@ -17,42 +17,30 @@ jobs:
       id-token: write
 
     steps:
-      - name: Checkout actions-oidc-debugger
+      - id: checkout
+        name: Checkout
         uses: actions/checkout@v4
-        with:
-          repository: github/actions-oidc-debugger
-          ref: main
-          token: ${{ github.token }}
-          path: ./.github/actions/actions-oidc-debugger
-      - name: Debug OIDC Claims
-        uses: ./.github/actions/actions-oidc-debugger
-        with:
-          audience: 'https://github.com/github'
 
-#      - id: checkout
-#        name: Checkout
-#        uses: actions/checkout@v4
-#
-#      - id: auth
-#        name: Authenticate with Google Cloud
-#        uses: google-github-actions/auth@v2
-#        with:
-#          token_format: access_token
-#          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
-#          service_account: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
-#          access_token_lifetime: 300s
-#
-#      - name: Login to Artifact Registry
-#        uses: docker/login-action@v3
-#        with:
-#          registry: us-east4-docker.pkg.dev
-#          username: oauth2accesstoken
-#          password: ${{ steps.auth.outputs.access_token }}
-#
-#      - id: docker-build-and-push
-#        name: Docker build and push to Google Artifact Registry
-#        uses: docker/build-push-action@v5
-#        with:
-#          push: true
-#          tags: |
-#            ${{ secrets.ARTIFACT_REGISTRY_URL }}/rclone-tinyproxy:latest
+      - id: auth
+        name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          token_format: access_token
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
+          access_token_lifetime: 300s
+
+      - name: Login to Artifact Registry
+        uses: docker/login-action@v3
+        with:
+          registry: us-east4-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
+
+      - id: docker-build-and-push
+        name: Docker build and push to Google Artifact Registry
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: |
+            ${{ secrets.ARTIFACT_REGISTRY_URL }}/rclone-tinyproxy:latest
